@@ -1,11 +1,7 @@
 import User from "../models/User.js";
 import Token from "../models/Token.js";
-import bcrypt from "bcrypt";
-import {
-  signAccessToken,
-  signRefreshToken,
-  verifyRefreshToken,
-} from "../utils/jwt.js";
+import { signAccessToken } from "../utils/jwt.js";
+import { cryptoRandomString, hashedCryptoString } from "../utils/crypto.js";
 
 export const registerService = async (data) => {
   // Kiểm tra dữ liệu có đầy đủ hay không!
@@ -40,43 +36,33 @@ export const loginService = async (email, password) => {
   }
 
   // kiểm tra so sánh password FE với password DB: dùng hàm đã thiết lập trong model để compare
-  const match = await bcrypt.compare(password, user.hashPassword);
+  const match = await user.comparePassword(password);
   if (!match) {
     throw new Error("Tài khoản hoặc mật khẩu không chính xác!");
   }
 
   // Tạo accessToken
   const accessToken = signAccessToken(user._id.toString());
-  const refreshToken = signRefreshToken(user._id.toString());
 
-  // Lưu refreshToken vào db
+  // Tạo refreshToken
+  const refreshToken = cryptoRandomString;
+  const hashedRefreshToken = hashedCryptoString(refreshToken);
+  console.log(hashedRefreshToken);
+
+  // Lưu hashedRefreshToken vào db
   await Token.create({
     userId: user._id,
-    token: refreshToken,
+    token: hashedRefreshToken,
     expiresAt: new Date(Date.now() + REFRESH_TOKEN_TTL),
   });
 
-  // trả về 2 loại token
+  // trả về 2 loại accessToken, refreshToken;
   return { accessToken, refreshToken };
 };
 
 export const logoutService = async (refreshToken) => {
-  return await Token.deleteOne({ token: refreshToken });
+  const hashedRefreshToken = hashedCryptoString(refreshToken);
+  return await Token.deleteOne({ token: hashedRefreshToken });
 };
 
-export const refreshTokenService = async (refreshToken) => {
-  // Kiểm tra refreshToken có tồn tại trên DB hay không
-  const token = await Token.findOne({ token: refreshToken });
-  if (!token) {
-    throw new Error("Token không hợp lệ hoặc đã hết hạn!");
-  }
-
-  // Kiểm tra so sánh refreshToken với KEY refreshToken
-  const decoded = verifyRefreshToken(refreshToken);
-
-  // Tạo accessToken mới
-  const newAccessToken = signAccessToken(decoded.userId);
-
-  // trả về accessToken mới
-  return newAccessToken;
-};
+export const refreshTokenService = async (refreshToken) => {};

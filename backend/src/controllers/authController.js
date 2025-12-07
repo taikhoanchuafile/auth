@@ -1,10 +1,11 @@
+import Token from "../models/Token.js";
 import {
   loginService,
   logoutService,
-  refreshTokenService,
   registerService,
 } from "../services/authService.js";
-import { verifyRefreshToken } from "../utils/jwt.js";
+import { hashedCryptoString } from "../utils/crypto.js";
+import { signAccessToken } from "../utils/jwt.js";
 
 export const registerController = async (req, res, next) => {
   try {
@@ -68,13 +69,21 @@ export const refreshTokenController = async (req, res, next) => {
       return res.status(401).json({ message: "Token không tồn tại!" });
     }
 
-    const match = verifyRefreshToken(refreshToken);
-    if (!match) {
-      return res.status(401).json({ message: "Token không hợp lệ!" });
+    //Kiểm tra refreshToken trên db
+    const hashedRefreshToken = hashedCryptoString(refreshToken);
+    const session = await Token.findOne({ token: hashedRefreshToken });
+    if (!session) {
+      return res
+        .status(401)
+        .json({ message: "Token đã hết hạn hoặc không đúng!" });
+    }
+    // TH refreshToken trên db đã hết hạn nhưng xóa tự động không làm ăn được, xét thời gian hết hạn
+    if (session.expiresAt < new Date()) {
+      return res.status(401).json({ message: "Token đã hết hạn!" });
     }
 
     // Tạo accessToken mới
-    const newAccessToken = await refreshTokenService(refreshToken);
+    const newAccessToken = signAccessToken(session.userId.toString());
 
     res.status(200).json({ accessToken: newAccessToken });
   } catch (error) {
