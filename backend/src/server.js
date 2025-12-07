@@ -34,10 +34,6 @@ app.use("/api/users", userRoute);
 app.use(errorHandler);
 
 await connectDB();
-
-// app.listen(PORT, () => {
-//   console.log("Chạy server thành công trên cổng:", PORT);
-// });
-
-//chuẩn bị cho vercel
-export default app;
+app.listen(PORT, () => {
+  console.log("Chạy server thành công trên cổng:", PORT);
+});
