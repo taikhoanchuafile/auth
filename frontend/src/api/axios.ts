@@ -2,7 +2,8 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL;
+const baseURL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api";
 
 const api = axios.create({
   baseURL,
@@ -42,8 +43,6 @@ api.interceptors.response.use(
     const original = err.config;
 
     if (err.response?.status === 401 && !original._retry) {
-      console.log("đã vô phần refresh");
-
       if (isRefreshing) {
         // request 2,3,4...sẽ tạo thành promise chờ
         // callback sẽ lưu vào queue
@@ -67,11 +66,10 @@ api.interceptors.response.use(
           {},
           { withCredentials: true }
         );
-        console.log("2");
 
         // Lưu accessToken mới vào store
         useAuthStore.getState().setAccessToken(res.data.accessToken);
-        console.log("3");
+
         //Sau khi có accessToken,
         //gắn lại token và chạy lại tất cả request nằm trong queue
         queue.forEach((cb) => cb(res.data.accessToken));
@@ -83,6 +81,7 @@ api.interceptors.response.use(
       } catch (error) {
         //logout + thông báo + kết thúc promise fail
         useAuthStore.getState().logout();
+        toast.warning("Phiên đăng nhập đã hết hạn!");
         return Promise.reject(error);
       } finally {
         // đánh dấu đã refresh xong chờ đợt tiếp theo

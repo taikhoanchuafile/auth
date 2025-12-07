@@ -5,12 +5,8 @@ import { Navigate, Outlet } from "react-router";
 const ProtectedRoute = () => {
   const accessToken = useAuthStore((state) => state.accessToken);
   const loading = useAuthStore((state) => state.loading);
-  const user = useAuthStore((state) => state.user);
-  const fetchMe = useAuthStore((state) => state.fetchMe);
   const refreshToken = useAuthStore((state) => state.refreshToken);
   const [start, setStart] = useState(true);
-  console.log(user);
-  console.log(accessToken);
 
   useEffect(() => {
     const init = async () => {
@@ -25,7 +21,7 @@ const ProtectedRoute = () => {
   if (start || loading) {
     return (
       <div className="flex items-center justify-center h-screen w-full">
-        Loading...
+        Đang tải trang....
       </div>
     );
   }

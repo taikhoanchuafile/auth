@@ -1,6 +1,5 @@
 import { authService } from "@/services/authService.ts";
 import type { AuthState } from "@/types/auth.types.ts";
-import { useNavigate } from "react-router";
 
 import { toast } from "react-toastify";
 import { create } from "zustand";
@@ -10,7 +9,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   loading: false,
 
-  setAccessToken: (token) => set({ accessToken: token }),
+  setAccessToken: (accessToken) => set({ accessToken }),
   setUser: (user) => set({ user }),
   clearState: () => set({ accessToken: null, user: null, loading: false }),
 

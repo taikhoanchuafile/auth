@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Token from "../models/Token.js";
+import bcrypt from "bcrypt";
 import {
   signAccessToken,
   signRefreshToken,
@@ -39,7 +40,7 @@ export const loginService = async (email, password) => {
   }
 
   // kiểm tra so sánh password FE với password DB: dùng hàm đã thiết lập trong model để compare
-  const match = await user.comparePassword(password);
+  const match = await bcrypt.compare(password, user.hashPassword);
   if (!match) {
     throw new Error("Tài khoản hoặc mật khẩu không chính xác!");
   }

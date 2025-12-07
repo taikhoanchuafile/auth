@@ -19,7 +19,6 @@ import { loginSchema, type LoginValidate } from "@/schemas/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useNavigate } from "react-router";
-import { toast } from "react-toastify";
 
 export function LoginForm({
   className,

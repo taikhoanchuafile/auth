@@ -10,6 +10,7 @@ import { authMiddleware } from "./middlewares/auth.js";
 
 dotenv.config();
 const PORT = process.env.PORT;
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 const app = express();
 
@@ -17,7 +18,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: FRONTEND_URL,
     credentials: true,
   })
 );

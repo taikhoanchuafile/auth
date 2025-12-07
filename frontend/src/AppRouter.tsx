@@ -5,6 +5,7 @@ const AppRouter = () => {
   return (
     <div>
       <ToastContainer />
+
       <Outlet />
     </div>
   );

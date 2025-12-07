@@ -13,7 +13,6 @@ const Home = () => {
       toast.success("Access token vẫn còn");
     } catch (error) {
       console.log(error);
-
       toast.error("Access token hết hạn");
     }
   };
