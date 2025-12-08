@@ -112,9 +112,6 @@ export function LoginForm({
 
               <Field>
                 <Button type="submit">Login</Button>
-                <Button variant="outline" type="button">
-                  Login with Google
-                </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{" "}
                   <a href="/auth/register">Sign up</a>
