@@ -19,7 +19,7 @@ Dự án tập trung vào:
 
 ### **Demo**
 
-https://authgg-fe.vercel.app/
+https://auth-fe-sigma.vercel.app
 
 ### **Screenshot**
 
@@ -120,7 +120,7 @@ cd backend
 npm install
 ```
 
-- Vào authgg/backend tạo file **.env**
+- Vào auth/backend tạo file **.env**
 
 ```bash
 PORT=5001
